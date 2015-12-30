@@ -1,6 +1,4 @@
-﻿
-
-var code_examples = {
+﻿var code_examples = {
 	sine: "// generate a sine wave of 440 Hz\n\
 \n\
 for (var i=0; i<samplingRate * wavLength; i++){\n\
@@ -102,10 +100,9 @@ document.addEventListener("DOMContentLoaded", function(){
 		renderAndDownloadWAV(samplingRate, 1, audioBuffer);
 		
     });
-    
-	
 	
 	var input_buttons = document.getElementsByClassName("standard_input_type_button");
+	
 	for (var i = 0; i < input_buttons.length; i++) {
     
 		var element = input_buttons[i];
@@ -138,45 +135,45 @@ var renderAndDownloadWAV = function(samplingRate, numberOfChannels, buffer){
 }
 
 
-	var renderWAVFileFromAudioBuffer = function(samplingRate, numberOfChannels, buffer, then){
+var renderWAVFileFromAudioBuffer = function(samplingRate, numberOfChannels, buffer, then){
+
+	console.log("rendering wav form buffer:");
+	console.log(buffer);
 	
-		console.log("rendering wav form buffer:");
-		console.log(buffer);
-		
-		// start a new worker
-		var worker = new Worker("recorderWorker.js");
+	// start a new worker
+	var worker = new Worker("recorderWorker.js");
 
-		// initialize the new worker
-		worker.postMessage({
-			command: 'init',
-			config: {
-				sampleRate: samplingRate,
-				numChannels: numberOfChannels
-			}
-		});
+	// initialize the new worker
+	worker.postMessage({
+		command: 'init',
+		config: {
+			sampleRate: samplingRate,
+			numChannels: numberOfChannels
+		}
+	});
 
-		// send the channel data from our buffer to the worker
-		worker.postMessage({
-			command: 'record',
-			buffer: [
-				buffer.getChannelData(0)/*, 
-				buffer.getChannelData(1)*/
-			]
-		});
-		
-		// callback for `exportWAV`
-		worker.onmessage = function( e ) {
-		  var blob = e.data;
-		  // this is would be your WAV blob
-		 
-			then(blob);
-		  
-		};
-
-		// ask the worker for a WAV
-		worker.postMessage({
-		  command: 'exportWAV',
-		  type: 'audio/wav'
-		});
+	// send the channel data from our buffer to the worker
+	worker.postMessage({
+		command: 'record',
+		buffer: [
+			buffer.getChannelData(0)/*, 
+			buffer.getChannelData(1)*/
+		]
+	});
 	
+	// callback for `exportWAV`
+	worker.onmessage = function(e) {
+		var blob = e.data;
+		// this is would be your WAV blob
+	 
+		then(blob);
+	  
 	};
+
+	// ask the worker for a WAV
+	worker.postMessage({
+		command: 'exportWAV',
+		type: 'audio/wav'
+	});
+	
+};
