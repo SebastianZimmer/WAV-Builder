@@ -1,0 +1,37 @@
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>WAV Builder</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+<h1>WAV Builder</h1>
+<p>WAV Builder builds custom WAV files according to scripted code.</p>
+
+<p>Sampling Rate (callable as samplingRate): <input type="number" id="input_samplingRate" value="44100"></p>
+<p>Length of WAV (callable as wavLength): <input type="number" id="input_wavLength" value="10"></p>
+
+<textarea id="textarea_script">
+</textarea>
+<br>
+<input type="button" id="make_wav" value="Make WAV">
+
+
+<h2>Examples</h2>
+<button class="standard_input_type_button" id="input_select_sine" data-type="sine">Sine</button>
+<button class="standard_input_type_button" id="input_select_triangle" data-type="triangle">Triangle</button>
+<button class="standard_input_type_button" id="input_select_square" data-type="square">Square</button>
+<!--<button class="standard_input_type_button" id="input_select_sawtooth" data-type="sawtooth">Sawtooth</button>-->
+
+<p>WAV Builder uses <a href="https://github.com/mattdiamond/Recorderjs">Recorder.js</a>.</p>
+
+<script src="start.js"></script>
+<script src="ajax.js"></script>
+<script src="FileSaver.js"></script>
+
+</body>
+
+</html>

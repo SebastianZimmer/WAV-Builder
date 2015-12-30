@@ -1,0 +1,14 @@
+﻿textarea{
+	
+	display: block;
+	background-color: lightskyblue;
+	display: inline-block;
+	width: 700px;
+	height: 300px;
+	font-size: 12pt;
+	
+	font-family: 'Hack';
+	font-weight: 400;
+	
+}
+
