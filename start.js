@@ -81,10 +81,12 @@ document.addEventListener("DOMContentLoaded", function(){
 	oc("make_wav", function(){
 		
 		var samplingRate = parseInt(g("input_samplingRate").value);
-		var wavLength = parseInt(g("input_wavLength").value);
+		var wavLength = parseFloat(g("input_wavLength").value);
 		
-		var AC = new OfflineAudioContext(1, wavLength * samplingRate, samplingRate);
-		var audioBuffer = AC.createBuffer(1, wavLength * samplingRate, samplingRate);
+		var length_of_buffer = Math.round(wavLength * samplingRate);
+		
+		var AC = new OfflineAudioContext(1, length_of_buffer, samplingRate);
+		var audioBuffer = AC.createBuffer(1, length_of_buffer, samplingRate);
 		var channelData = audioBuffer.getChannelData(0);
 		
 		var out = new Float32Array(samplingRate * wavLength);
