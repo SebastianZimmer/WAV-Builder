@@ -1,14 +1,18 @@
-﻿var code_examples = {
-	sine: "// generate a sine wave of 440 Hz\n\
+﻿var examples = {
+	sine: {
+		code: "// generate a sine wave of 440 Hz\n\
 \n\
 for (var i=0; i<samplingRate * wavLength; i++){\n\
 \n\
     out[i] = Math.sin(440 * i * 2 * Math.PI / samplingRate);\n\
 \n\
 }",
+		samplingRate: 44100,
+		wavLength: 10
+	},
 
-triangle:
-"// generate a triangle wave of 440 Hz\n\
+	triangle: {
+		code: "// generate a triangle wave of 440 Hz\n\
 \n\
 // frequency\n\
 var f = 440\n\
@@ -22,9 +26,12 @@ for (var i=0; i<samplingRate * wavLength; i++){\n\
     out[i] = (a/p) * (p - Math.abs(i % (2*p) - p) ) - (a/2);\n\
 \n\
 }",
+		samplingRate: 44100,
+		wavLength: 10
+	},
 
-square:
-"// generate a square wave of 440 Hz\n\
+	square: {
+		code: "// generate a square wave of 440 Hz\n\
 \n\
 // frequency\n\
 var f = 440\n\
@@ -37,7 +44,28 @@ for (var i=0; i<samplingRate * wavLength; i++){\n\
 \n\
     out[i] = (i % (2 * p)) < p ? a : (-a);\n\
 \n\
-}"
+}",
+		samplingRate: 44100,
+		wavLength: 10
+	},
+
+	sinc: {
+		code: "// sinc function with peak position and offset\n\
+\n\
+var k = 0.5;\n\
+var length = 24;\n\
+var peak_pos = 12;\n\
+var offset = 0.375;\n\
+\n\
+for (var i=0; i<length; i++){\n\
+\n\
+    out[i] = k * Math.sin(Math.PI * (i - peak_pos - offset)) / (Math.PI * (i - peak_pos - offset));\n\
+\n\
+}\n\
+",
+		samplingRate: 48000,
+		wavLength: 0.0005
+	}
 	
 }
 
@@ -67,16 +95,18 @@ var oc = function(element_or_id, action){
 };
 
 
-var setTextareaValue = function(value){
+var setExample = function(example){
 
-	g("textarea_script").value = value;
+	g("textarea_script").value = example.code;
+	g("input_samplingRate").value = example.samplingRate;
+	g("input_wavLength").value = example.wavLength;
 
 }
 
 
 document.addEventListener("DOMContentLoaded", function(){
 
-	setTextareaValue(code_examples.sine);
+	setExample(examples.sine);
 	
 	oc("make_wav", function(){
 		
@@ -115,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function(){
 			return function(){
 				console.log(type);
 				
-				setTextareaValue(code_examples[type]);
+				setExample(examples[type]);
 				
 			}
 		}(type));
