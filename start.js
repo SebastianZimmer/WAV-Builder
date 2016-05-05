@@ -49,6 +49,33 @@ for (var i=0; i<samplingRate * wavLength; i++){\n\
 		wavLength: 10
 	},
 
+	square_as_sum_of_harmonics: {
+		code: "// generate a square wave of 440 Hz\n\
+\n\
+// frequency\n\
+var f = 440;\n\
+// period\n\
+var p = 0.5 * samplingRate / f;\n\
+// amplitude\n\
+var a = 0.7;\n\
+//angular frequency\n\
+var w = 2 * Math.PI * f;\n\
+\n\
+for (var i=0; i<samplingRate * wavLength; i++){\n\
+    \n\
+    var s = 0; \n\
+\n\
+    for (var j=0; j<10; j++){\n\
+        s += a * (4 / ((2*j+1) * Math.PI)) * Math.sin((2*j+1) * w * i / samplingRate);\n\
+    }\n\
+\n\
+    out[i] = s;\n\
+\n\
+}",
+		samplingRate: 44100,
+		wavLength: 10
+	},
+
 	sinc: {
 		code: "// sinc function with peak position and offset\n\
 \n\
@@ -66,32 +93,32 @@ for (var i=0; i<length; i++){\n\
 		samplingRate: 48000,
 		wavLength: 0.0005
 	}
-	
+
 }
 
 
 var g = function(id){
 
 	return document.getElementById(id);
-	
+
 }
 
 var oc = function(element_or_id, action){
-	
+
 	if (typeof element_or_id == "object"){
-	
+
 		var element = element_or_id;
-		
+
 	}
-	
+
 	else {
-		
+
 		element = g(element_or_id);
-		
+
 	}
-	
+
 	element.addEventListener("click", action, false);
-	
+
 };
 
 
@@ -107,51 +134,51 @@ var setExample = function(example){
 document.addEventListener("DOMContentLoaded", function(){
 
 	setExample(examples.sine);
-	
+
 	oc("make_wav", function(){
-		
+
 		var samplingRate = parseInt(g("input_samplingRate").value);
 		var wavLength = parseFloat(g("input_wavLength").value);
-		
+
 		var length_of_buffer = Math.round(wavLength * samplingRate);
-		
+
 		var AC = new OfflineAudioContext(1, length_of_buffer, samplingRate);
 		var audioBuffer = AC.createBuffer(1, length_of_buffer, samplingRate);
 		var channelData = audioBuffer.getChannelData(0);
-		
+
 		var out = new Float32Array(samplingRate * wavLength);
-		
+
 		eval(g("textarea_script").value);
-		
+
 		for (var s = 0; s < samplingRate * wavLength; s++){
-			
+
 			channelData[s] = out[s];
-			
+
 		}
-		
+
 		renderAndDownloadWAV(samplingRate, 1, audioBuffer);
-		
+
     });
-	
+
 	var input_buttons = document.getElementsByClassName("standard_input_type_button");
-	
+
 	for (var i = 0; i < input_buttons.length; i++) {
-    
+
 		var element = input_buttons[i];
-	
+
 		var type = element.getAttribute("data-type");
-	
+
 		oc(element, function(type){
 			return function(){
 				console.log(type);
-				
+
 				setExample(examples[type]);
-				
+
 			}
 		}(type));
-		
+
 	}
-	
+
 });
 
 
@@ -159,11 +186,11 @@ document.addEventListener("DOMContentLoaded", function(){
 var renderAndDownloadWAV = function(samplingRate, numberOfChannels, buffer){
 
 	renderWAVFileFromAudioBuffer(samplingRate, numberOfChannels, buffer, function(blob){
-		
+
 		saveAs(blob, "export.wav");
-		
+
 	});
-	
+
 }
 
 
@@ -171,7 +198,7 @@ var renderWAVFileFromAudioBuffer = function(samplingRate, numberOfChannels, buff
 
 	console.log("rendering wav form buffer:");
 	console.log(buffer);
-	
+
 	// start a new worker
 	var worker = new Worker("recorderWorker.js");
 
@@ -188,18 +215,18 @@ var renderWAVFileFromAudioBuffer = function(samplingRate, numberOfChannels, buff
 	worker.postMessage({
 		command: 'record',
 		buffer: [
-			buffer.getChannelData(0)/*, 
+			buffer.getChannelData(0)/*,
 			buffer.getChannelData(1)*/
 		]
 	});
-	
+
 	// callback for `exportWAV`
 	worker.onmessage = function(e) {
 		var blob = e.data;
 		// this is would be your WAV blob
-	 
+
 		then(blob);
-	  
+
 	};
 
 	// ask the worker for a WAV
@@ -207,5 +234,5 @@ var renderWAVFileFromAudioBuffer = function(samplingRate, numberOfChannels, buff
 		command: 'exportWAV',
 		type: 'audio/wav'
 	});
-	
+
 };
