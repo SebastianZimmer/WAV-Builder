@@ -96,27 +96,49 @@ for (var i=0; i<length; i++){\n\
   sine_sweep: {
     code: `// generate linear sine sweep
 
-    const A = 1;                                                // sine wave amplitude
-    const f0 = 1;                                               // start frequency
-    const f1 = 20000;                                           // end frequency
-    const T_sweep = wavLength;                                  // duration of sweep (s)
-    const lengthInSamples = samplingRate * wavLength;           // duration of sweep (samples)
-    
-    const f_delta = (f1 - f0) / (samplingRate * wavLength)      // instantaneous frequency increment per sample
-    
-    let phi = 0;                                                // phase accumulator
-    let delta = 2 * Math.PI * f0 / samplingRate;                // phase increment per sample
-    let f = f0;                                                 // initial frequency
-    
-    for (var i=0; i < lengthInSamples; i++){
-        out[i] = A * Math.sin(phi);                             // output sample value for current sample
-        phi += delta;                                           // increment phase accumulator
-        f += f_delta;                                           // increment instantaneous frequency
-        delta = 2 * Math.PI * f / samplingRate;                 // re-calculate phase increment
-    }`,
+const A = 1;                                                // sine wave amplitude
+const f0 = 1;                                               // start frequency
+const f1 = 20000;                                           // end frequency
+const T_sweep = wavLength;                                  // duration of sweep (s)
+const lengthInSamples = samplingRate * wavLength;           // duration of sweep (samples)
+
+const f_delta = (f1 - f0) / (samplingRate * wavLength)      // instantaneous frequency increment per sample
+
+let phi = 0;                                                // phase accumulator
+let delta = 2 * Math.PI * f0 / samplingRate;                // phase increment per sample
+let f = f0;                                                 // initial frequency
+
+for (var i=0; i < lengthInSamples; i++){
+		out[i] = A * Math.sin(phi);                             // output sample value for current sample
+		phi += delta;                                           // increment phase accumulator
+		f += f_delta;                                           // increment instantaneous frequency
+		delta = 2 * Math.PI * f / samplingRate;                 // re-calculate phase increment
+}`,
     samplingRate: 44100,
     wavLength: 10
-  }
+	},
+	log_sine_sweep: {
+      code: `// generate logarithmic sine sweep
+// source: http://guillaume.perrin74.free.fr/ChalmersMT2012/Papers/Impulse%20Response/IEEE_2008_LSP_IR_SineSweep.pdf
+
+const f0 = 10;                                              // start frequency
+const f1 = 20000;                                           // end frequency
+const T = wavLength;                                        // duration of sweep (s)
+const lengthInSamples = samplingRate * wavLength;           // duration of sweep (samples)
+
+const f0_2pi = 2 * Math.PI * f0;
+const f1_2pi = 2 * Math.PI * f1;
+const ln = Math.log(f1_2pi / f0_2pi);
+const K = (T * f0_2pi) / ln;
+const L = T / ln;
+
+for (let i=0; i < lengthInSamples; i++){
+		const t = (i / lengthInSamples) * T;
+		out[i] = Math.sin(K * (Math.pow(Math.E, t / L) - 1));
+}`,
+		samplingRate: 44100,
+		wavLength: 10
+	}
 
 }
 
