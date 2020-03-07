@@ -3,12 +3,16 @@
 	display: block;
 	background-color: lightskyblue;
 	display: inline-block;
-	width: 700px;
-	height: 300px;
+	width: 1150px;
+	height: 600px;
 	font-size: 12pt;
 	
 	font-family: 'Hack';
 	font-weight: 400;
 	
+}
+
+#make_wav{
+	font-size: x-large;
 }
 
