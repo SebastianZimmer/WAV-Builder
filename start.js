@@ -1,18 +1,18 @@
 ﻿var examples = {
-	sine: {
-		code: "// generate a sine wave of 440 Hz\n\
+  sine: {
+    code: "// generate a sine wave of 440 Hz\n\
 \n\
 for (var i=0; i<samplingRate * wavLength; i++){\n\
 \n\
     out[i] = Math.sin(440 * i * 2 * Math.PI / samplingRate);\n\
 \n\
 }",
-		samplingRate: 44100,
-		wavLength: 10
-	},
+    samplingRate: 44100,
+    wavLength: 10
+  },
 
-	triangle: {
-		code: "// generate a triangle wave of 440 Hz\n\
+  triangle: {
+    code: "// generate a triangle wave of 440 Hz\n\
 \n\
 // frequency\n\
 var f = 440\n\
@@ -26,12 +26,12 @@ for (var i=0; i<samplingRate * wavLength; i++){\n\
     out[i] = (a/p) * (p - Math.abs(i % (2*p) - p) ) - (a/2);\n\
 \n\
 }",
-		samplingRate: 44100,
-		wavLength: 10
-	},
+    samplingRate: 44100,
+    wavLength: 10
+  },
 
-	square: {
-		code: "// generate a square wave of 440 Hz\n\
+  square: {
+    code: "// generate a square wave of 440 Hz\n\
 \n\
 // frequency\n\
 var f = 440\n\
@@ -45,12 +45,12 @@ for (var i=0; i<samplingRate * wavLength; i++){\n\
     out[i] = (i % (2 * p)) < p ? a : (-a);\n\
 \n\
 }",
-		samplingRate: 44100,
-		wavLength: 10
-	},
+    samplingRate: 44100,
+    wavLength: 10
+  },
 
-	square_as_sum_of_harmonics: {
-		code: "// generate a square wave of 440 Hz\n\
+  square_as_sum_of_harmonics: {
+    code: "// generate a square wave of 440 Hz\n\
 \n\
 // frequency\n\
 var f = 440;\n\
@@ -72,12 +72,12 @@ for (var i=0; i<samplingRate * wavLength; i++){\n\
     out[i] = s;\n\
 \n\
 }",
-		samplingRate: 44100,
-		wavLength: 10
-	},
+    samplingRate: 44100,
+    wavLength: 10
+  },
 
-	sinc: {
-		code: "// sinc function with peak position and offset\n\
+  sinc: {
+    code: "// sinc function with peak position and offset\n\
 \n\
 var k = 0.5;\n\
 var length = 24;\n\
@@ -109,15 +109,15 @@ let delta = 2 * Math.PI * f0 / samplingRate;                // phase increment p
 let f = f0;                                                 // initial frequency
 
 for (var i=0; i < lengthInSamples; i++){
-		out[i] = A * Math.sin(phi);                             // output sample value for current sample
-		phi += delta;                                           // increment phase accumulator
-		f += f_delta;                                           // increment instantaneous frequency
-		delta = 2 * Math.PI * f / samplingRate;                 // re-calculate phase increment
+    out[i] = A * Math.sin(phi);                             // output sample value for current sample
+    phi += delta;                                           // increment phase accumulator
+    f += f_delta;                                           // increment instantaneous frequency
+    delta = 2 * Math.PI * f / samplingRate;                 // re-calculate phase increment
 }`,
     samplingRate: 44100,
     wavLength: 10
-	},
-	log_sine_sweep: {
+  },
+  log_sine_sweep: {
       code: `// generate logarithmic sine sweep
 // source: http://guillaume.perrin74.free.fr/ChalmersMT2012/Papers/Impulse%20Response/IEEE_2008_LSP_IR_SineSweep.pdf
 
@@ -133,97 +133,97 @@ const K = (T * f0_2pi) / ln;
 const L = T / ln;
 
 for (let i=0; i < lengthInSamples; i++){
-		const t = (i / lengthInSamples) * T;
-		out[i] = Math.sin(K * (Math.pow(Math.E, t / L) - 1));
+  const t = (i / lengthInSamples) * T;
+  out[i] = Math.sin(K * (Math.pow(Math.E, t / L) - 1));
 }`,
-		samplingRate: 44100,
-		wavLength: 10
-	}
+    samplingRate: 44100,
+    wavLength: 10
+  }
 
 }
 
 
 var g = function(id){
 
-	return document.getElementById(id);
+  return document.getElementById(id);
 
 }
 
 var oc = function(element_or_id, action){
 
-	if (typeof element_or_id == "object"){
+  if (typeof element_or_id == "object"){
 
-		var element = element_or_id;
+    var element = element_or_id;
 
-	}
+  }
 
-	else {
+  else {
 
-		element = g(element_or_id);
+    element = g(element_or_id);
 
-	}
+  }
 
-	element.addEventListener("click", action, false);
+  element.addEventListener("click", action, false);
 
 };
 
 
 var setExample = function(example){
 
-	g("textarea_script").value = example.code;
-	g("input_samplingRate").value = example.samplingRate;
-	g("input_wavLength").value = example.wavLength;
+  g("textarea_script").value = example.code;
+  g("input_samplingRate").value = example.samplingRate;
+  g("input_wavLength").value = example.wavLength;
 
 }
 
 
 document.addEventListener("DOMContentLoaded", function(){
 
-	setExample(examples.sine);
+  setExample(examples.sine);
 
-	oc("make_wav", function(){
+  oc("make_wav", function(){
 
-		var samplingRate = parseInt(g("input_samplingRate").value);
-		var wavLength = parseFloat(g("input_wavLength").value);
+    var samplingRate = parseInt(g("input_samplingRate").value);
+    var wavLength = parseFloat(g("input_wavLength").value);
 
-		var length_of_buffer = Math.round(wavLength * samplingRate);
+    var length_of_buffer = Math.round(wavLength * samplingRate);
 
-		var AC = new OfflineAudioContext(1, length_of_buffer, samplingRate);
-		var audioBuffer = AC.createBuffer(1, length_of_buffer, samplingRate);
-		var channelData = audioBuffer.getChannelData(0);
+    var AC = new OfflineAudioContext(1, length_of_buffer, samplingRate);
+    var audioBuffer = AC.createBuffer(1, length_of_buffer, samplingRate);
+    var channelData = audioBuffer.getChannelData(0);
 
-		var out = new Float32Array(samplingRate * wavLength);
+    var out = new Float32Array(samplingRate * wavLength);
 
-		eval(g("textarea_script").value);
+    eval(g("textarea_script").value);
 
-		for (var s = 0; s < samplingRate * wavLength; s++){
+    for (var s = 0; s < samplingRate * wavLength; s++){
 
-			channelData[s] = out[s];
+      channelData[s] = out[s];
 
-		}
+    }
 
-		renderAndDownloadWAV(samplingRate, 1, audioBuffer);
+    renderAndDownloadWAV(samplingRate, 1, audioBuffer);
 
     });
 
-	var input_buttons = document.getElementsByClassName("standard_input_type_button");
+  var input_buttons = document.getElementsByClassName("standard_input_type_button");
 
-	for (var i = 0; i < input_buttons.length; i++) {
+  for (var i = 0; i < input_buttons.length; i++) {
 
-		var element = input_buttons[i];
+    var element = input_buttons[i];
 
-		var type = element.getAttribute("data-type");
+    var type = element.getAttribute("data-type");
 
-		oc(element, function(type){
-			return function(){
-				console.log(type);
+    oc(element, function(type){
+      return function(){
+        console.log(type);
 
-				setExample(examples[type]);
+        setExample(examples[type]);
 
-			}
-		}(type));
+      }
+    }(type));
 
-	}
+  }
 
 });
 
@@ -231,54 +231,54 @@ document.addEventListener("DOMContentLoaded", function(){
 
 var renderAndDownloadWAV = function(samplingRate, numberOfChannels, buffer){
 
-	renderWAVFileFromAudioBuffer(samplingRate, numberOfChannels, buffer, function(blob){
+  renderWAVFileFromAudioBuffer(samplingRate, numberOfChannels, buffer, function(blob){
 
-		saveAs(blob, "export.wav");
+    saveAs(blob, "export.wav");
 
-	});
+  });
 
 }
 
 
 var renderWAVFileFromAudioBuffer = function(samplingRate, numberOfChannels, buffer, then){
 
-	console.log("rendering wav form buffer:");
-	console.log(buffer);
+  console.log("rendering wav form buffer:");
+  console.log(buffer);
 
-	// start a new worker
-	var worker = new Worker("recorderWorker.js");
+  // start a new worker
+  var worker = new Worker("recorderWorker.js");
 
-	// initialize the new worker
-	worker.postMessage({
-		command: 'init',
-		config: {
-			sampleRate: samplingRate,
-			numChannels: numberOfChannels
-		}
-	});
+  // initialize the new worker
+  worker.postMessage({
+    command: 'init',
+    config: {
+      sampleRate: samplingRate,
+      numChannels: numberOfChannels
+    }
+  });
 
-	// send the channel data from our buffer to the worker
-	worker.postMessage({
-		command: 'record',
-		buffer: [
-			buffer.getChannelData(0)/*,
-			buffer.getChannelData(1)*/
-		]
-	});
+  // send the channel data from our buffer to the worker
+  worker.postMessage({
+    command: 'record',
+    buffer: [
+      buffer.getChannelData(0)/*,
+      buffer.getChannelData(1)*/
+    ]
+  });
 
-	// callback for `exportWAV`
-	worker.onmessage = function(e) {
-		var blob = e.data;
-		// this is would be your WAV blob
+  // callback for `exportWAV`
+  worker.onmessage = function(e) {
+    var blob = e.data;
+    // this is would be your WAV blob
 
-		then(blob);
+    then(blob);
 
-	};
+  };
 
-	// ask the worker for a WAV
-	worker.postMessage({
-		command: 'exportWAV',
-		type: 'audio/wav'
-	});
+  // ask the worker for a WAV
+  worker.postMessage({
+    command: 'exportWAV',
+    type: 'audio/wav'
+  });
 
 };
