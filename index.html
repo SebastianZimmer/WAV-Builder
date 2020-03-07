@@ -13,6 +13,23 @@
 
 <p>Sampling Rate (callable as samplingRate): <input type="number" id="input_samplingRate" value="44100"></p>
 <p>Length of WAV in seconds (callable as wavLength): <input type="number" id="input_wavLength" value="10"></p>
+<p>Bit depth:
+  <input
+    name="input_bitDepth"
+    type="radio"
+    id="input_bitDepth_16"
+    value="16"
+    checked
+  >
+  <label for="input_bitDepth_16">16 bit</label>
+  <input
+    name="input_bitDepth"
+    type="radio"
+    id="input_bitDepth_24"
+    value="24"
+  >
+  <label for="input_bitDepth_24">24 bit</label>
+</p>
 
 <textarea id="textarea_script">
 </textarea>
@@ -34,7 +51,11 @@
 </button>
 <!--<button class="standard_input_type_button" id="input_select_sawtooth" data-type="sawtooth">Sawtooth</button>-->
 
-<p>WAV Builder uses <a href="https://github.com/mattdiamond/Recorderjs">Recorder.js</a>.</p>
+<p>
+  WAV Builder uses
+  <a href="https://github.com/mattdiamond/Recorderjs">Recorder.js</a>
+  and <a href="https://github.com/eligrey/FileSaver.js/">FileSaver.js</a>.
+</p>
 <p>v0.4</p>
 
 <script src="start.js"></script>

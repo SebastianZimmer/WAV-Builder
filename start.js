@@ -1,4 +1,4 @@
-﻿var examples = {
+﻿const examples = {
   sine: {
     code: "// generate a sine wave of 440 Hz\n\
 \n\
@@ -143,37 +143,26 @@ for (let i=0; i < lengthInSamples; i++){
 }
 
 
-var g = function(id){
-
+const g = function(id){
   return document.getElementById(id);
-
 }
 
-var oc = function(element_or_id, action){
 
+const oc = function(element_or_id, action) {
   if (typeof element_or_id == "object"){
-
     var element = element_or_id;
-
-  }
-
-  else {
-
+  } else {
     element = g(element_or_id);
-
   }
 
   element.addEventListener("click", action, false);
-
 };
 
 
-var setExample = function(example){
-
+const setExample = function(example){
   g("textarea_script").value = example.code;
   g("input_samplingRate").value = example.samplingRate;
   g("input_wavLength").value = example.wavLength;
-
 }
 
 
@@ -197,21 +186,19 @@ document.addEventListener("DOMContentLoaded", function(){
     eval(g("textarea_script").value);
 
     for (var s = 0; s < samplingRate * wavLength; s++){
-
       channelData[s] = out[s];
-
     }
 
     renderAndDownloadWAV(samplingRate, 1, audioBuffer);
 
-    });
+  });
 
-  var input_buttons = document.getElementsByClassName("standard_input_type_button");
+  var input_buttons = document.getElementsByClassName(
+    "standard_input_type_button"
+  );
 
   for (var i = 0; i < input_buttons.length; i++) {
-
     var element = input_buttons[i];
-
     var type = element.getAttribute("data-type");
 
     oc(element, function(type){
@@ -228,57 +215,59 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 
-
-var renderAndDownloadWAV = function(samplingRate, numberOfChannels, buffer){
-
-  renderWAVFileFromAudioBuffer(samplingRate, numberOfChannels, buffer, function(blob){
-
-    saveAs(blob, "export.wav");
-
-  });
-
+const renderAndDownloadWAV = async (
+  samplingRate, numberOfChannels, buffer
+) => {
+  const blob = await renderWAVFileFromAudioBuffer(
+    samplingRate, numberOfChannels, buffer
+  );
+  saveAs(blob, "export.wav");
 }
 
 
-var renderWAVFileFromAudioBuffer = function(samplingRate, numberOfChannels, buffer, then){
+const renderWAVFileFromAudioBuffer = function(
+  samplingRate, numberOfChannels, buffer
+){
 
-  console.log("rendering wav form buffer:");
-  console.log(buffer);
-
-  // start a new worker
-  var worker = new Worker("recorderWorker.js");
-
-  // initialize the new worker
-  worker.postMessage({
-    command: 'init',
-    config: {
-      sampleRate: samplingRate,
-      numChannels: numberOfChannels
-    }
-  });
-
-  // send the channel data from our buffer to the worker
-  worker.postMessage({
-    command: 'record',
-    buffer: [
-      buffer.getChannelData(0)/*,
-      buffer.getChannelData(1)*/
-    ]
-  });
-
-  // callback for `exportWAV`
-  worker.onmessage = function(e) {
-    var blob = e.data;
-    // this is would be your WAV blob
-
-    then(blob);
-
-  };
-
-  // ask the worker for a WAV
-  worker.postMessage({
-    command: 'exportWAV',
-    type: 'audio/wav'
+  return new Promise((resolve, reject) => {
+    console.log("rendering wav form buffer:");
+    console.log(buffer);
+  
+    // start a new worker
+    const worker = new Worker("recorderWorker.js");
+  
+    // initialize the new worker
+    worker.postMessage({
+      command: 'init',
+      config: {
+        sampleRate: samplingRate,
+        numChannels: numberOfChannels,
+        bitDepth: parseInt(
+          document.querySelector('input[name="input_bitDepth"]:checked').value
+        ),
+      }
+    });
+  
+    // send the channel data from our buffer to the worker
+    worker.postMessage({
+      command: 'record',
+      buffer: [
+        buffer.getChannelData(0)/*,
+        buffer.getChannelData(1)*/
+      ]
+    });
+  
+    // callback for `exportWAV`
+    worker.onmessage = function(e) {
+      const blob = e.data;
+      resolve(blob);
+    };
+  
+    // ask the worker for a WAV
+    worker.postMessage({
+      command: 'exportWAV',
+      type: 'audio/wav'
+    });
   });
 
 };
