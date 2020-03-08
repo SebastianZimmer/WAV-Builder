@@ -236,25 +236,18 @@ const renderWAVFileFromAudioBuffer = function(
     // start a new worker
     const worker = new Worker("recorderWorker.js");
   
-    // initialize the new worker
     worker.postMessage({
-      command: 'init',
       config: {
         sampleRate: samplingRate,
         numChannels: numberOfChannels,
         bitDepth: parseInt(
           document.querySelector('input[name="input_bitDepth"]:checked').value
         ),
-      }
-    });
-  
-    // send the channel data from our buffer to the worker
-    worker.postMessage({
-      command: 'record',
-      buffer: [
+      },
+      buffers: [
         buffer.getChannelData(0)/*,
         buffer.getChannelData(1)*/
-      ]
+      ],
     });
   
     // callback for `exportWAV`
@@ -262,12 +255,6 @@ const renderWAVFileFromAudioBuffer = function(
       const blob = e.data;
       resolve(blob);
     };
-  
-    // ask the worker for a WAV
-    worker.postMessage({
-      command: 'exportWAV',
-      type: 'audio/wav'
-    });
   });
 
 };

@@ -1,88 +1,22 @@
-let recLength = 0;
-let recBuffers = [];
-let sampleRate;
-let bitDepth;
-let numChannels;
-
 this.onmessage = function(e){
-  switch(e.data.command){
-    case 'init':
-      init(e.data.config);
-      break;
-    case 'record':
-      record(e.data.buffer);
-      break;
-    case 'exportWAV':
-      exportWAV(e.data.type);
-      break;
-    case 'getBuffer':
-      getBuffer();
-      break;
-    case 'clear':
-      clear();
-      break;
-  }
+  const inputBuffers = e.data.buffers;
+  const config = e.data.config;
+  const blob = createWAVBlob(inputBuffers, config);
+  this.postMessage(blob);
 };
 
-function init(config){
-  sampleRate = config.sampleRate;
-  numChannels = config.numChannels;
-  bitDepth = config.bitDepth;
-  initBuffers();
-}
 
-function record(inputBuffer){
-  for (var channel = 0; channel < numChannels; channel++){
-    recBuffers[channel].push(inputBuffer[channel]);
-  }
-  recLength += inputBuffer[0].length;
-}
-
-function exportWAV(type){
-  var buffers = [];
-  for (var channel = 0; channel < numChannels; channel++){
-    buffers.push(mergeBuffers(recBuffers[channel], recLength));
-  }
-  if (numChannels === 2){
+function createWAVBlob(buffers, config){
+  if (config.numChannels === 2){
       var interleaved = interleave(buffers[0], buffers[1]);
   } else {
       var interleaved = buffers[0];
   }
-  var dataview = encodeWAV(interleaved);
-  var audioBlob = new Blob([dataview], { type: type });
+  const dataview = encodeWAV(interleaved, config);
+  const audioBlob = new Blob([dataview], { type: "audio/wav" });
+  return audioBlob;
+};
 
-  this.postMessage(audioBlob);
-}
-
-function getBuffer(){
-  var buffers = [];
-  for (var channel = 0; channel < numChannels; channel++){
-    buffers.push(mergeBuffers(recBuffers[channel], recLength));
-  }
-  this.postMessage(buffers);
-}
-
-function clear(){
-  recLength = 0;
-  recBuffers = [];
-  initBuffers();
-}
-
-function initBuffers(){
-  for (var channel = 0; channel < numChannels; channel++){
-    recBuffers[channel] = [];
-  }
-}
-
-function mergeBuffers(recBuffers, recLength){
-  var result = new Float32Array(recLength);
-  var offset = 0;
-  for (var i = 0; i < recBuffers.length; i++){
-    result.set(recBuffers[i], offset);
-    offset += recBuffers[i].length;
-  }
-  return result;
-}
 
 function interleave(inputL, inputR){
   var length = inputL.length + inputR.length;
@@ -145,7 +79,12 @@ function writeString(view, offset, string){
   }
 }
 
-function encodeWAV(interleavedSamples){
+
+function encodeWAV(interleavedSamples, config){
+  const sampleRate = config.sampleRate;
+  const bitDepth = config.bitDepth;
+  const numChannels = config.numChannels;
+
   var buffer = new ArrayBuffer(44 + interleavedSamples.length * (bitDepth / 8));
   var view = new DataView(buffer);
 
@@ -184,7 +123,6 @@ function encodeWAV(interleavedSamples){
   } else {
     floatTo24BitPCM(view, 44, interleavedSamples);
   }
-
 
   return view;
 }
