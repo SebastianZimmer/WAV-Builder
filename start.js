@@ -2,7 +2,7 @@
   sine: {
     code: "// generate a sine wave of 440 Hz\n\
 \n\
-for (var i=0; i<samplingRate * wavLength; i++){\n\
+for (let i=0; i<samplingRate * wavLength; i++){\n\
 \n\
     out[i] = Math.sin(440 * i * 2 * Math.PI / samplingRate);\n\
 \n\
@@ -15,13 +15,13 @@ for (var i=0; i<samplingRate * wavLength; i++){\n\
     code: "// generate a triangle wave of 440 Hz\n\
 \n\
 // frequency\n\
-var f = 440\n\
+const f = 440\n\
 // period\n\
-var p = 0.5 * samplingRate / f;\n\
+const p = 0.5 * samplingRate / f;\n\
 // amplitude\n\
-var a = 0.7;\n\
+const a = 0.7;\n\
 \n\
-for (var i=0; i<samplingRate * wavLength; i++){\n\
+for (let i=0; i<samplingRate * wavLength; i++){\n\
 \n\
     out[i] = (a/p) * (p - Math.abs(i % (2*p) - p) ) - (a/2);\n\
 \n\
@@ -34,13 +34,13 @@ for (var i=0; i<samplingRate * wavLength; i++){\n\
     code: "// generate a square wave of 440 Hz\n\
 \n\
 // frequency\n\
-var f = 440\n\
+const f = 440\n\
 // period\n\
-var p = 0.5 * samplingRate / f;\n\
+const p = 0.5 * samplingRate / f;\n\
 // amplitude\n\
-var a = 0.7;\n\
+const a = 0.7;\n\
 \n\
-for (var i=0; i<samplingRate * wavLength; i++){\n\
+for (let i=0; i<samplingRate * wavLength; i++){\n\
 \n\
     out[i] = (i % (2 * p)) < p ? a : (-a);\n\
 \n\
@@ -53,19 +53,19 @@ for (var i=0; i<samplingRate * wavLength; i++){\n\
     code: "// generate a square wave of 440 Hz\n\
 \n\
 // frequency\n\
-var f = 440;\n\
+const f = 440;\n\
 // period\n\
-var p = 0.5 * samplingRate / f;\n\
+const p = 0.5 * samplingRate / f;\n\
 // amplitude\n\
-var a = 0.7;\n\
+const a = 0.7;\n\
 //angular frequency\n\
-var w = 2 * Math.PI * f;\n\
+const w = 2 * Math.PI * f;\n\
 \n\
-for (var i=0; i<samplingRate * wavLength; i++){\n\
+for (let i=0; i<samplingRate * wavLength; i++){\n\
     \n\
-    var s = 0; \n\
+    let s = 0; \n\
 \n\
-    for (var j=0; j<10; j++){\n\
+    for (let j=0; j<10; j++){\n\
         s += a * (4 / ((2*j+1) * Math.PI)) * Math.sin((2*j+1) * w * i / samplingRate);\n\
     }\n\
 \n\
@@ -79,12 +79,12 @@ for (var i=0; i<samplingRate * wavLength; i++){\n\
   sinc: {
     code: "// sinc function with peak position and offset\n\
 \n\
-var k = 0.5;\n\
-var length = 24;\n\
-var peak_pos = 12;\n\
-var offset = 0.375;\n\
+const k = 0.5;\n\
+const length = 24;\n\
+const peak_pos = 12;\n\
+const offset = 0.375;\n\
 \n\
-for (var i=0; i<length; i++){\n\
+for (let i=0; i<length; i++){\n\
 \n\
     out[i] = k * Math.sin(Math.PI * (i - peak_pos - offset)) / (Math.PI * (i - peak_pos - offset));\n\
 \n\
@@ -108,7 +108,7 @@ let phi = 0;                                                // phase accumulator
 let delta = 2 * Math.PI * f0 / samplingRate;                // phase increment per sample
 let f = f0;                                                 // initial frequency
 
-for (var i=0; i < lengthInSamples; i++){
+for (let i=0; i < lengthInSamples; i++){
     out[i] = A * Math.sin(phi);                             // output sample value for current sample
     phi += delta;                                           // increment phase accumulator
     f += f_delta;                                           // increment instantaneous frequency
