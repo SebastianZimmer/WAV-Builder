@@ -16,3 +16,7 @@
 	font-size: x-large;
 }
 
+body, .standard_input_type_button{
+  font-size: larger;
+}
+

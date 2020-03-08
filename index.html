@@ -1,18 +1,34 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <title>WAV Builder</title>
-
+<meta
+  name="description"
+  content="WAV Builder builds custom RIFF WAVE files according to scripted code."
+>
+<meta name="author" content="webaudiotech.com">
+<meta name="viewport" content="width=device-width">
 <link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 <h1>WAV Builder</h1>
-<p>WAV Builder builds custom WAV files according to scripted code.</p>
+<p>WAV Builder builds custom RIFF WAVE files according to scripted code.</p>
 
-<p>Sampling Rate (callable as samplingRate): <input type="number" id="input_samplingRate" value="44100"></p>
-<p>Length of WAV in seconds (callable as wavLength): <input type="number" id="input_wavLength" value="10"></p>
+<p>
+  <label for="input_samplingRate">
+    Sampling Rate (callable as samplingRate):
+  </label>
+  <input type="number" id="input_samplingRate" value="44100">
+</p>
+<p>
+  <label for="input_wavLength">
+    Length of WAV in seconds (callable as wavLength):
+  </label>
+  <input type="number" id="input_wavLength" value="10">
+</p>
 <p>Bit depth:
   <input
     name="input_bitDepth"
@@ -38,6 +54,8 @@
   <label for="input_bitDepth_24">24 bit</label>
 </p>
 
+<label for="textarea_script">Your code:</label>
+<br>
 <textarea id="textarea_script">
 </textarea>
 <br>
