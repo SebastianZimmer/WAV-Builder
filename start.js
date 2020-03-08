@@ -234,7 +234,7 @@ const renderWAVFileFromAudioBuffer = function(
     console.log(buffer);
   
     // start a new worker
-    const worker = new Worker("recorderWorker.js");
+    const worker = new Worker("createWAVFile.js");
   
     worker.postMessage({
       config: {
