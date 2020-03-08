@@ -169,7 +169,7 @@ function encodeWAV(interleavedSamples){
   const byteRate = sampleRate * numChannels * (bitDepth / 8);
   view.setUint32(28, byteRate, true);
   /* block align (channel count * bytes per sample) */
-  view.setUint16(32, numChannels * 2, true);
+  view.setUint16(32, numChannels * Math.floor((bitDepth + 7) / 8), true);
   /* bits per sample */
   view.setUint16(34, bitDepth, true);
   /* data chunk identifier */
