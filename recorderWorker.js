@@ -105,6 +105,17 @@ const clampSampleValue = (value) => {
 }
 
 
+function floatTo8BitPCM(output, offset, input){
+  for (let i = 0; i < input.length; i++, offset++){
+    const value = clampSampleValue(input[i]);
+    // for whatever reason, 8bit audio is unsigned in contrast to 16bit/24bit.
+    // Source: http://soundfile.sapp.org/doc/WaveFormat/
+    const bitValue = ((value + 1) / 2) * 0xFF;
+    output.setUint8(offset, bitValue);
+  }
+}
+
+
 function floatTo16BitPCM(output, offset, input){
   for (let i = 0; i < input.length; i++, offset += 2){
     const value = clampSampleValue(input[i]);
@@ -119,7 +130,7 @@ function floatTo24BitPCM(output, offset, input){
     const value = clampSampleValue(input[i]);
     const bitValue = value < 0 ? value * 0x800000 : value * 0x7FFFFF;
 
-    // WAVE file data is in little-endian, so split the 3 bytes into
+    // WAVE file data is in little-endian, so split the 3 bytes into a
     // less significant lower 1 byte part and write that first
     output.setInt8(offset, bitValue & 0x0000FF, true);
     // after that, we write the upper, more significant 2 bytes part ...
@@ -166,7 +177,9 @@ function encodeWAV(interleavedSamples){
   /* data chunk length */
   view.setUint32(40, interleavedSamples.length * (bitDepth / 8), true);
 
-  if (bitDepth === 16){
+  if (bitDepth === 8){
+    floatTo8BitPCM(view, 44, interleavedSamples);
+  } else if (bitDepth === 16){
     floatTo16BitPCM(view, 44, interleavedSamples);
   } else {
     floatTo24BitPCM(view, 44, interleavedSamples);
