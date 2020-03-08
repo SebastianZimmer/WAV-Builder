@@ -73,6 +73,14 @@ function floatTo24BitPCM(output, offset, input){
 }
 
 
+function floatTo32BitFloatPCM(output, offset, input){
+  for (let i = 0; i < input.length; i++, offset += 4){
+    const value = clampSampleValue(input[i]);
+    output.setFloat32(offset, value, true);
+  }
+}
+
+
 function writeString(view, offset, string){
   for (var i = 0; i < string.length; i++){
     view.setUint8(offset + i, string.charCodeAt(i));
@@ -98,8 +106,9 @@ function encodeWAV(interleavedSamples, config){
   writeString(view, 12, 'fmt ');
   /* format chunk length */
   view.setUint32(16, 16, true);
-  /* sample format (raw PCM) */
-  view.setUint16(20, 1, true);
+  /* sample format (raw PCM = 1, IEEE Float = 3) */
+  const dataFormatCode = config.bitDepth === 32 ? 3 : 1;
+  view.setUint16(20, dataFormatCode, true);
   /* channel count */
   view.setUint16(22, numChannels, true);
   /* sample rate */
@@ -120,8 +129,10 @@ function encodeWAV(interleavedSamples, config){
     floatTo8BitPCM(view, 44, interleavedSamples);
   } else if (bitDepth === 16){
     floatTo16BitPCM(view, 44, interleavedSamples);
-  } else {
+  } else if (bitDepth === 24){
     floatTo24BitPCM(view, 44, interleavedSamples);
+  } else {
+    floatTo32BitFloatPCM(view, 44, interleavedSamples);
   }
 
   return view;
